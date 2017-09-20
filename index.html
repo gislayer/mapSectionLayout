@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaflet Map Section Layout</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script>
+    <style>
+        #map{
+            position: fixed;
+            top:0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+
+</head>
+<body>
+<div id="map"></div>
+<select id="scale" style="position: fixed; bottom: 0; left: 0; z-index: 5" onchange="paftaSec(this)">
+    <option value="250000">250000</option>
+    <option value="100000">100000</option>
+    <option value="50000">50000</option>
+    <option value="25000">25000</option>
+    <option value="10000">10000</option>
+    <option value="5000">5000</option>
+    <option value="2000">2000</option>
+    <option value="1000">1000</option>
+    <option value="500">500</option>
+    <option value="250">250</option>
+    <option value="100">100</option>
+</select>
+</body>
+</html>
+<script>
+    var map = L.map('map').setView([38.7412,27.7266], 13);
+
+    var googlestreet = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+        attribution:'<a href="http://www.alikilic.org">Ali KILIC</a> | Map Section Layout | Harita Paftalama',
+        maxZoom: 20,
+        subdomains:['mt0','mt1','mt2','mt3']
+    });
+    googlestreet.addTo(map);
+
+    var nokta = L.marker([38.7412,27.7266]).addTo(map).bindPopup('Buradasiniz');
+    map.on('click',function (e) {
+        nokta.setLatLng(e.latlng);
+        var olcek = document.getElementById('scale').value;
+        olcek=parseInt(olcek);
+        var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},olcek);
+        console.log(sonuc);
+        drawRect(sonuc.paftalar[olcek].bbox,"#ff7800");
+    });
+</script>
+<script src="mapSectionLayout.js"></script>
