@@ -20,6 +20,7 @@
 <body>
 <div id="map"></div>
 <select id="scale" style="position: fixed; bottom: 0; left: 0; z-index: 5" onchange="paftaSec(this)">
+    <option value="0">Lutfen secim yapiniz</option>
     <option value="250000">250000</option>
     <option value="100000">100000</option>
     <option value="50000">50000</option>
@@ -52,6 +53,9 @@
         var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},olcek);
         console.log(sonuc);
         drawRect(sonuc.paftalar[olcek].bbox,"#ff7800");
+        // deneme
+        // deneme
+
     });
 </script>
 <script src="mapSectionLayout.js"></script>
