@@ -19,8 +19,11 @@
 </head>
 <body>
 <div id="map"></div>
-<select id="scale" style="position: fixed; bottom: 0; left: 0; z-index: 5" onchange="paftaSec(this)">
+<select id="scale" style="position: fixed; bottom: 0; left: 0; z-index: 5">
     <option value="0">Lutfen secim yapiniz</option>
+    <option value="2000000">2000000</option>
+    <option value="1000000">1000000</option>
+    <option value="500000">500000</option>
     <option value="250000">250000</option>
     <option value="100000">100000</option>
     <option value="50000">50000</option>
@@ -35,6 +38,7 @@
 </select>
 </body>
 </html>
+<script src="turkey.js"></script>
 <script>
     var map = L.map('map').setView([38.7412,27.7266], 13);
 
@@ -50,9 +54,10 @@
         nokta.setLatLng(e.latlng);
         var olcek = document.getElementById('scale').value;
         olcek=parseInt(olcek);
-        var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},olcek);
+        var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},'turkey');
         console.log(sonuc);
-        drawRect(sonuc.paftalar[olcek].bbox,"#ff7800");
+        var sonuc2 = sonuc.get(olcek);
+        drawRect(sonuc,olcek,"#ff7800");
         // deneme
         // deneme
 
