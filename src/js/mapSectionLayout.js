@@ -207,5 +207,3 @@ L.Layout ={
   }
 };
 
-var a = new L.Layout.pafta({lat:32,lng:38},"turkey");
-a.draw(2000000,true);

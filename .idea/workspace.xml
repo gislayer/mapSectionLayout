@@ -42,7 +42,7 @@
         <entry file="file://$PROJECT_DIR$/src/js/mapSectionLayout.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="455">
-              <caret line="207" column="2" lean-forward="true" selection-start-line="207" selection-start-column="2" selection-end-line="207" selection-end-column="2" />
+              <caret line="208" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
               <folding>
                 <element signature="e#3376#3417#0" expanded="false" />
                 <element signature="e#3791#4620#0" expanded="false" />
@@ -244,12 +244,12 @@
       <workItem from="1505906763407" duration="11265000" />
       <workItem from="1505976564870" duration="21632000" />
       <workItem from="1506066736491" duration="3321000" />
-      <workItem from="1506070150753" duration="4248000" />
+      <workItem from="1506070150753" duration="5083000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42572000" />
+    <option name="totallyTimeSpent" value="43407000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
@@ -517,7 +517,7 @@
     <entry file="file://$PROJECT_DIR$/src/js/mapSectionLayout.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="455">
-          <caret line="207" column="2" lean-forward="true" selection-start-line="207" selection-start-column="2" selection-end-line="207" selection-end-column="2" />
+          <caret line="208" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
           <folding>
             <element signature="e#3376#3417#0" expanded="false" />
             <element signature="e#3791#4620#0" expanded="false" />
