@@ -42,7 +42,7 @@
         <entry file="file://$PROJECT_DIR$/mapSectionLayout.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="146">
-              <caret line="57" column="26" lean-forward="true" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="26" />
+              <caret line="57" column="26" lean-forward="false" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -202,12 +202,12 @@
       <workItem from="1505815548486" duration="2106000" />
       <workItem from="1505906763407" duration="11265000" />
       <workItem from="1505976564870" duration="21632000" />
-      <workItem from="1506066736491" duration="2433000" />
+      <workItem from="1506066736491" duration="2640000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37436000" />
+    <option name="totallyTimeSpent" value="37643000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="172" y="52" width="1857" height="1092" extended-state="6" />
@@ -333,7 +333,7 @@
     <entry file="file://$PROJECT_DIR$/mapSectionLayout.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="146">
-          <caret line="57" column="26" lean-forward="true" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="26" />
+          <caret line="57" column="26" lean-forward="false" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="26" />
           <folding />
         </state>
       </provider>
