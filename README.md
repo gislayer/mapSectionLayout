@@ -2,6 +2,7 @@
 
 For easy find to map threaders we are using Global Map Threader Segmentation.
 every threaders have a name. this name is address on the map. Systematically, a Direct Proportion finding method is used.
+## [Demo (click here)](http://www.alikilic.org/ulkepaftalama/index.html)
 
 ![alt text](http://www.yazilimlar.sektorharita.com/esref/img/pafta.png)
 
