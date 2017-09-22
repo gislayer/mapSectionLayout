@@ -116,6 +116,8 @@ Pafta.prototype.set=function (scale) {
         var sagUstBoy = solAltBoy+kendi.width;
     }
 
+    boyint=Math.abs(boyint);
+    enint=Math.abs(enint);
     if(scale!==2000000){
         if(scale!==1000000){
             kendi.name= kendi.label[boyint][enint];
