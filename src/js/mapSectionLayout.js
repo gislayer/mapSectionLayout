@@ -7,22 +7,23 @@ function Pafta(latLng,country) {
     this.lat = latLng.lat;
     this.lng = latLng.lng;
     this.scales=[2000000,1000000,500000,250000,100000,50000,25000,10000,5000,2000,1000,500,250,100];
+    this.images = [];
     this.paftalar = {
-        5000000:{color:'',width:30,height:20,lat:5,lng:5,get:10000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},name:'',globalName:''},
-        2000000:{color:'#ff0000',width:6,height:8,lat:2,lng:1,get:5000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:2000000,name:'',globalName:''},
-        1000000:{color:'#80d033',width:6,height:4,lat:2,lng:2,get:2000000,to:500000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['b'],['a']],name:'',globalName:''},
-        500000:{color:'#2ec1e5',width:3,height:2,lat:2,lng:2,get:1000000,to:250000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
-        250000:{color:'#438881',width:1.5,height:1,lat:2,lng:3,get:500000,to:100000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
-        100000:{color:'#d843ff',width:0.5,height:0.5,lat:2,lng:2,get:250000,to:50000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['5','2'],['6','3']],name:'',globalName:''},
-        50000:{color:'#085fff',width:0.25,height:0.25,lat:2,lng:2,get:100000,to:25000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
-        25000:{color:'#ffb6b6',width:0.125,height:0.125,lat:2,lng:2,get:50000,to:10000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
-        10000:{color:'#ffa900',width:0.05,height:0.05,lat:5,lng:5,get:50000,to:5000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['21','16','11','6','1'],['22','17','12','7','2'],['23','18','13','8','3'],['24','19','14','9','4'],['25','20','15','10','5']],name:'',globalName:''},
-        5000:{color:'#ff00fe',width:0.025,height:0.025,lat:2,lng:2,get:10000,to:2000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
-        2000:{color:'#b55877',width:0.0125,height:0.0125,lat:2,lng:2,get:5000,to:1000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
-        1000:{color:'#0c6502',width:0.00625,height:0.00625,lat:2,lng:2,get:2000,to:500,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
-        500:{color:'#ad3c68',width:0.003125,height:0.003125,lat:2,lng:2,get:1000,to:250,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
-        250:{color:'#717171',width:0.0015625,height:0.0015625,lat:2,lng:2,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
-        100:{color:'#d09d8b',width:0.000625,height:0.000625,lat:5,lng:5,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['21','16','11','6','1'],['22','17','12','7','2'],['23','18','13','8','3'],['24','19','14','9','4'],['25','20','15','10','5']],name:'',globalName:''}
+        5000000:{zoom:1,color:'',width:30,height:20,lat:5,lng:5,get:10000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},name:'',globalName:''},
+        2000000:{zoom:9,color:'#ff0000',width:6,height:8,lat:2,lng:1,get:5000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:2000000,name:'',globalName:''},
+        1000000:{zoom:9,color:'#80d033',width:6,height:4,lat:2,lng:2,get:2000000,to:500000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['b'],['a']],name:'',globalName:''},
+        500000:{zoom:10,color:'#2ec1e5',width:3,height:2,lat:2,lng:2,get:1000000,to:250000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
+        250000:{zoom:11,color:'#438881',width:1.5,height:1,lat:2,lng:3,get:500000,to:100000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
+        100000:{zoom:13,color:'#d843ff',width:0.5,height:0.5,lat:2,lng:2,get:250000,to:50000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['5','2'],['6','3']],name:'',globalName:''},
+        50000:{zoom:14,color:'#085fff',width:0.25,height:0.25,lat:2,lng:2,get:100000,to:25000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
+        25000:{zoom:15,color:'#ffb6b6',width:0.125,height:0.125,lat:2,lng:2,get:50000,to:10000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
+        10000:{zoom:16,color:'#ffa900',width:0.05,height:0.05,lat:5,lng:5,get:50000,to:5000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['21','16','11','6','1'],['22','17','12','7','2'],['23','18','13','8','3'],['24','19','14','9','4'],['25','20','15','10','5']],name:'',globalName:''},
+        5000:{zoom:17,color:'#ff00fe',width:0.025,height:0.025,lat:2,lng:2,get:10000,to:2000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
+        2000:{zoom:18,color:'#b55877',width:0.0125,height:0.0125,lat:2,lng:2,get:5000,to:1000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
+        1000:{zoom:19,color:'#0c6502',width:0.00625,height:0.00625,lat:2,lng:2,get:2000,to:500,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
+        500:{zoom:19,color:'#ad3c68',width:0.003125,height:0.003125,lat:2,lng:2,get:1000,to:250,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['4','1'],['3','2']],name:'',globalName:''},
+        250:{zoom:19,color:'#717171',width:0.0015625,height:0.0015625,lat:2,lng:2,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
+        100:{zoom:19,color:'#d09d8b',width:0.000625,height:0.000625,lat:5,lng:5,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['21','16','11','6','1'],['22','17','12','7','2'],['23','18','13','8','3'],['24','19','14','9','4'],['25','20','15','10','5']],name:'',globalName:''}
     };
     for(i in this.scales){
         this.set(this.scales[i]);
@@ -179,6 +180,74 @@ Pafta.prototype.draw=function (scale,fly) {
 Pafta.prototype.getPaftaScale=function (scale) {
 
 };
+Pafta.prototype.setTileSet=function () {
+
+};
+Pafta.prototype.getRaster = function (scale) {
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext("2d");
+    var LB = this.paftalar[scale].bbox.leftBottom;
+    var RT = this.paftalar[scale].bbox.rightTop;
+    LB.zoom = this.paftalar[scale].zoom;
+    RT.zoom = this.paftalar[scale].zoom;
+    var zoom = LB.zoom;
+    var LBxy = latLong2tile(LB);
+    var RTxy = latLong2tile(RT);
+    var x1=LBxy.x;
+    var y1=LBxy.y;
+    var x2=RTxy.x;
+    var y2=RTxy.y;
+    var tileLB = tile2LatLong(x1,y1,zoom);
+    var tileRT = tile2LatLong(x2,y2,zoom);
+    L.marker(tileLB).addTo(map);
+    L.marker(tileRT).addTo(map);
+    var xfark = Math.abs(x2-x1);
+    var yfark = Math.abs(y2-y1);
+    canvas.width = 256*(xfark+1);
+    canvas.height = 256*(yfark+1);
+    canvas.setAttribute("style","width:"+canvas.width+"px; height:"+canvas.height+"px;");
+
+    var xsize=0;
+    var imgs = [];
+    for(var x=x1;x<=x2;x++){
+        var ysize=0;
+        var xs=xsize*256;
+        for(var y=y2;y<=y1;y++){
+            var ys=ysize*256;
+            var linki ='http://mt1.google.com/vt/lyrs=m&x='+x+'&y='+y+'&z='+zoom+'';
+            //var linki = 'https://a.tile.openstreetmap.org/'+zoom+'/'+x+'/'+y+'.png';
+            this.imgDownload(canvas,ctx,linki,xs,ys);
+            ysize++;
+        }
+        xsize++;
+    }
+
+};
+
+Pafta.prototype.imgDownload=function(canvas,ctx,link,x,y){
+    var imageObj = new Image();
+    imageObj.src = link;
+    imageObj.setAttribute('crossOrigin', 'anonymous');
+    imageObj.onload = function(a) {
+        ctx.drawImage(imageObj,x,y);
+    };
+};
+
+function latLong2tile (obj){
+    var lat = obj.lat;
+    var lon = obj.lng;
+    var zoom = obj.zoom;
+    var xtile = (Math.floor((lon+180)/360*Math.pow(2,zoom)));
+    var ytile = (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)));
+    return {x:xtile,y:ytile,zoom:zoom};
+}
+
+function tile2LatLong (x,y,zoom){
+    var n=Math.PI-2*Math.PI*y/Math.pow(2,zoom);
+    var lng = (x/Math.pow(2,zoom)*360-180);
+    var lat = (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))))
+    return {lat:lat,lng:lng};
+}
 
 L.Layout ={
   pafta:function (latLng,country) {

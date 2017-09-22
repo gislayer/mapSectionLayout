@@ -36,6 +36,9 @@
     <option value="250">250</option>
     <option value="100">100</option>
 </select>
+<div style="display:none; visibility:hidden; position: fixed; bottom: 0; right: 0; width: 50%; height: 100%; z-index: 20;" id="can">
+<canvas id="canvas"></canvas>
+</div>
 </body>
 </html>
 <script src="src/js/turkey.js"></script>
@@ -56,6 +59,7 @@
         olcek=parseInt(olcek);
         var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},'turkey');
         var sonuc2 = sonuc.draw(olcek,true);
+        sonuc.getRaster(olcek);
     });
 </script>
 <script src="src/js/mapSectionLayout.js"></script>
