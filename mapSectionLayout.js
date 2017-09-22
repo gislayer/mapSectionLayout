@@ -1,11 +1,11 @@
 
 
-// enlem : 38.7412 boylam : 27.7266
+// lat : 38.7412 lng : 27.7266
 function Pafta(latLng,country) {
     this.name='';
     this.country=country;
-    this.enlem = latLng.lat;
-    this.boylam = latLng.lng;
+    this.lat = latLng.lat;
+    this.lng = latLng.lng;
     this.scales=[2000000,1000000,500000,250000,100000,50000,25000,10000,5000,2000,1000,500,250,100];
     this.paftalar = {
         5000000:{color:'',width:30,height:20,lat:5,lng:5,get:10000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},name:'',globalName:''},
@@ -24,26 +24,13 @@ function Pafta(latLng,country) {
         250:{color:'#717171',width:0.0015625,height:0.0015625,lat:2,lng:2,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['d','a'],['c','b']],name:'',globalName:''},
         100:{color:'#d09d8b',width:0.000625,height:0.000625,lat:5,lng:5,get:500,to:100,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:[['21','16','11','6','1'],['22','17','12','7','2'],['23','18','13','8','3'],['24','19','14','9','4'],['25','20','15','10','5']],name:'',globalName:''}
     };
-
-    this.paftalar['2000000'].bbox=this.set(2000000);
-    this.paftalar['1000000'].bbox=this.set(1000000);
-    this.paftalar['500000'].bbox=this.set(500000);
-    this.paftalar['250000'].bbox=this.set(250000);
-    this.paftalar['100000'].bbox=this.set(100000);
-    this.paftalar['50000'].bbox=this.set(50000);
-    this.paftalar['25000'].bbox=this.set(25000);
-    this.paftalar['10000'].bbox=this.set(10000);
-    this.paftalar['5000'].bbox=this.set(5000);
-    this.paftalar['2000'].bbox=this.set(2000);
-    this.paftalar['1000'].bbox=this.set(1000);
-    this.paftalar['500'].bbox=this.set(500);
-    this.paftalar['250'].bbox=this.set(250);
-    this.paftalar['100'].bbox=this.set(100);
+    for(i in this.scales){
+        this.set(this.scales[i]);
+    }
     return this;
 }
 Pafta.prototype.get=function (scale) {
     if(this.scales.indexOf(scale)>-1){
-        this.setName(scale);
         return this.paftalar[scale];
     }else{
         alert('Wrong Scale Number Please Select Only This Value : (2000000,1000000,500000,250000,100000,50000,25000,10000,5000,2000,1000,500,250,100)');
@@ -52,46 +39,39 @@ Pafta.prototype.get=function (scale) {
 
 
 };
-Pafta.prototype.setDefaultName = function (dizi,scale) {
-    var a=0;
-    var name = "";
-    for(olcek in this.scales){
-        if(this.scales[olcek]==scale){
-            if(a==0){
-                this.name=this.paftalar[dizi[olcek]].name;
-                a++;
-            }else{
-                this.name=this.name+'-'+this.paftalar[dizi[olcek]].name;
-            }
-            break;
-        }else{
-            if(a==0){
-                this.name=this.paftalar[dizi[olcek]].name;
-                a++;
-            }else{
-                this.name=this.name+'-'+this.paftalar[dizi[olcek]].name;
-            }
-        }
-    }
-};
 Pafta.prototype.setName100000=function () {
     var name='';
     var json = LocalLayer100000[this.country];
     var bbox = json.bbox;
+    var p1 = L.latLng(bbox.leftBottom);
+    var p2 = L.latLng(bbox.rightTop);
+    var cerceve = L.latLngBounds(p1, p2);
+    var p3 = L.latLng({lat:this.lat,lng:this.lng});
+    var durum = cerceve.contains(p3);
     var horizontal = json[json.horizontal];
     var vertical = json[json.vertical];
     var fetbbox = this.paftalar['100000'].bbox.leftBottom;
     var farkhor = (fetbbox.lng-bbox.leftBottom.lng)/this.paftalar['100000'].width;
     var farkver = (fetbbox.lat-bbox.leftBottom.lat)/this.paftalar['100000'].height;
-    var number = horizontal[farkhor];
-    var text = vertical[farkver];
-    name = text+""+number;
+    if(durum==true){
+        var number = horizontal[farkhor];
+        var text = vertical[farkver];
+        name = text+""+number;
+    }else{
+        var name = this.paftalar['100000'].name;
+    }
+
     return name;
 };
 Pafta.prototype.setName250000=function () {
-    var nnn = '';
+    var name = '';
     var json = LocalLayer250000[this.country];
     var bbox = LocalLayer250000.bbox;
+    var p1 = L.latLng(bbox.leftBottom);
+    var p2 = L.latLng(bbox.rightTop);
+    var cerceve = L.latLngBounds(p1, p2);
+    var p3 = L.latLng({lat:this.lat,lng:this.lng});
+    var durum = cerceve.contains(p3);
     var leftBottomLat = bbox.leftBottom.lat;
     var leftBottomLng = bbox.leftBottom.lng;
     var orjleftBottomLat = this.paftalar['250000'].bbox.leftBottom.lat;
@@ -100,42 +80,16 @@ Pafta.prototype.setName250000=function () {
     var enfark = orjleftBottomLat-leftBottomLat;
     var tamboy = boyfark/this.paftalar['250000'].width;
     var tamen = enfark/this.paftalar['250000'].height;
-    var name = json[tamen][tamboy];
-    return nnn;
-};
-Pafta.prototype.setName=function (scale) {
-    var newscales = this.scales;
-    if(scale==10000 || scale==25000){
-        if(scale==10000){
-            var indexnum = this.scales.indexOf(25000);
-            newscales.splice(indexnum,1);
-        }else{
-            var indexnum = this.scales.indexOf(10000);
-            newscales.splice(indexnum,1);
-        }
-
-    }
-    if(newscales.indexOf(scale)>-1){
-        if(scale==250000 || scale==100000){
-            if(scale==250000){
-                var name = this.setName250000();
-                this.name=this.name+''+name;
-            }else{
-                var name = this.setName100000();
-                this.name=this.name+''+name;
-            }
-        }else{
-            this.setDefaultName(newscales,scale);
-        }
-        this.paftalar[scale].globalName=this.name;
+    if(durum==true){
+        var name = json[tamen][tamboy];
     }else{
-        alert('Wrong Scale Number Please Select Only This Value : (2000000,1000000,500000,250000,100000,50000,25000,10000,5000,2000,1000,500,250,100)');
-        return false;
+        var name = this.paftalar['250000'].name;
     }
+    return name;
 };
 Pafta.prototype.set=function (scale) {
-    var en = this.enlem;
-    var bo = this.boylam;
+    var en = this.lat;
+    var bo = this.lng;
     var kendi=this.paftalar[scale];
     var ust = kendi.get;
     var box = this.paftalar[ust].bbox;
@@ -145,19 +99,19 @@ Pafta.prototype.set=function (scale) {
     var enint = parseInt(farken/kendi.height);
     var solAltBoy = box.leftBottom.lng+(boyint*kendi.width);
     var solAltEn = box.leftBottom.lat+(enint*kendi.height);
-    if(this.boylam>=0 && this.enlem>=0){
+    if(this.lng>=0 && this.lat>=0){
         var sagUstEn = solAltEn+kendi.height;
         var sagUstBoy = solAltBoy+kendi.width;
     }
-    if(this.boylam<0 && this.enlem>=0){
+    if(this.lng<0 && this.lat>=0){
         var sagUstEn = solAltEn+kendi.height;
         var sagUstBoy = solAltBoy-kendi.width;
     }
-    if(this.boylam<0 && this.enlem<0){
+    if(this.lng<0 && this.lat<0){
         var sagUstEn = solAltEn-kendi.height;
         var sagUstBoy = solAltBoy-kendi.width;
     }
-    if(this.boylam>=0 && this.enlem<0){
+    if(this.lng>=0 && this.lat<0){
         var sagUstEn = solAltEn-kendi.height;
         var sagUstBoy = solAltBoy+kendi.width;
     }
@@ -176,50 +130,47 @@ Pafta.prototype.set=function (scale) {
             saydizi.push(i);
         }
         var bint=boyint; var eint=enint;
-        if(this.boylam>=0 && this.enlem>=0){
+        if(this.lng>=0 && this.lat>=0){
             bint=bint+30;
             eint=eint+11;
         }
-        if(this.boylam<0 && this.enlem>=0){
+        if(this.lng<0 && this.lat>=0){
             bint=30-bint;
             eint=eint+11;
         }
-        if(this.boylam<0 && this.enlem<0){
+        if(this.lng<0 && this.lat<0){
             bint=30-bint;
             eint=11-eint;
         }
-        if(this.boylam>=0 && this.enlem<0){
+        if(this.lng>=0 && this.lat<0){
             bint=bint+30;
             eint=11-eint;
         }
         kendi.name = harfdizi[eint]+''+saydizi[bint];
     }
-
-    return {leftBottom:{lat:solAltEn,lng:solAltBoy},rightTop:{lat:sagUstEn,lng:sagUstBoy}};
-};
-
-
-
-
-
-var rec=false;
-function drawRect(sonuc,olcek,renk) {
-    var bbox = sonuc.paftalar[olcek].bbox;
-    var bounds = [[bbox.leftBottom.lat,bbox.leftBottom.lng], [bbox.rightTop.lat, bbox.rightTop.lng]];
-    console.log(bounds);
-    L.rectangle(bounds, {color: sonuc.paftalar[olcek].color, weight: 1}).bindPopup(sonuc.paftalar[olcek].globalName).addTo(map);
-    /*if(rec==false){
-        rec=L.rectangle(bounds, {color: "#ff7800", weight: 1}).addTo(map);
+    this.paftalar[scale].bbox = {leftBottom:{lat:solAltEn,lng:solAltBoy},rightTop:{lat:sagUstEn,lng:sagUstBoy}};
+    if(scale==250000){
+        this.paftalar['250000'].name=this.setName250000();
+        kendi.name=this.paftalar['250000'].name;
+    }
+    if(scale==100000){
+        this.paftalar['100000'].name=this.setName100000();
+        kendi.name=this.paftalar['100000'].name;
+    }
+    if(scale>=2000000){
+        kendi.globalName=kendi.name;
     }else{
-        rec.setBounds(bounds);
-    }*/
-}
-
-
-
-/*
-function  paftaSec(a) {
-    var olcek = a.value;
-    olcek=parseInt(olcek);
-    var sonuc = new Pafta({lat:38.7412,lng:27.7266},olcek);
-}*/
+        kendi.globalName=this.paftalar[ust].globalName+'-'+kendi.name;
+    }
+    this.paftalar[scale]=kendi;
+    return this.paftalar[scale].bbox;
+};
+Pafta.prototype.draw=function (scale,fly) {
+    var pft = this.paftalar[scale];
+    var bbox = pft.bbox;
+    var bounds = [[bbox.leftBottom.lat,bbox.leftBottom.lng], [bbox.rightTop.lat, bbox.rightTop.lng]];
+    L.rectangle(bounds, {color: pft.color, weight: 1}).bindPopup(pft.globalName).addTo(map);
+    if(fly==true){
+        map.flyToBounds(bounds);
+    }
+};

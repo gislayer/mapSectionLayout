@@ -55,12 +55,7 @@
         var olcek = document.getElementById('scale').value;
         olcek=parseInt(olcek);
         var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},'turkey');
-        console.log(sonuc);
-        var sonuc2 = sonuc.get(olcek);
-        drawRect(sonuc,olcek,"#ff7800");
-        // deneme
-        // deneme
-
+        var sonuc2 = sonuc.draw(olcek,true);
     });
 </script>
 <script src="mapSectionLayout.js"></script>
