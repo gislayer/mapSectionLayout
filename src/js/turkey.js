@@ -1,5 +1,5 @@
 var LocalLayer250000 = {
-    bbox:{leftBottom:{lat:36,lng:25.5},rightTop:{lat:41,lng:45.5}},
+    bbox:{leftBottom:{lat:36,lng:25.5},rightTop:{lat:42,lng:45}},
     turkey:[
         ["Kalimnos","Marmaris","Fethiye","Antalya","Alanya","Silifke","Adana","Antakya","Suruç","Ceylanpınar","Hasec","Musul","Erbil"],
         ["Samos","Aydın","Denizli","Isparta","Konya","Karaman","Kozan","Gaziantep","Urfa","Diyarbakır","Mardin","Cizre","Çölemerik"],
