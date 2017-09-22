@@ -176,3 +176,36 @@ Pafta.prototype.draw=function (scale,fly) {
         map.flyToBounds(bounds);
     }
 };
+Pafta.prototype.getPaftaScale=function (scale) {
+
+};
+
+L.Layout ={
+  pafta:function (latLng,country) {
+      var pafta = new Pafta(latLng,country);
+      return pafta;
+  },
+  getScaleList:function () {
+      return this.pafta.scales;
+  },
+  getNameScale:function (scale) {
+      return this.pafta.get(scale).name;
+  },
+  getGlobalName:function (scale) {
+      return this.pafta.get(scale).globalName;
+  },
+  getScaleBbox:function (scale) {
+      return this.pafta.get(scale).bbox;
+  },
+  setColor:function (scale,color) {
+      this.pafta.paftalar[scale].color=color;
+      return this.pafta;
+  },
+  draw:function (scale) {
+      this.pafta.draw(scale);
+      return this.pafta;
+  }
+};
+
+var a = new L.Layout.pafta({lat:32,lng:38},"turkey");
+a.draw(2000000,true);
