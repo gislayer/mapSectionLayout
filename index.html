@@ -39,9 +39,17 @@
 <div style="display:none; visibility:hidden; position: fixed; bottom: 0; right: 0; width: 50%; height: 100%; z-index: 20;" id="can">
 <canvas id="canvas"></canvas>
 </div>
+<div id="transparan">
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-4"></div>
+    <div style="text-align: center;" class="align-middle col-lg-2 col-md-2 col-sm-2 col-xs-4">
+        <img src="loading.gif" width="75" >
+    </div>
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-4"></div>
+</div>
 </body>
 </html>
 <script src="src/js/turkey.js"></script>
+<script src="src/js/download.js"></script>
 <script>
     var map = L.map('map').setView([38.7412,27.7266], 13);
 
@@ -59,7 +67,8 @@
         olcek=parseInt(olcek);
         var sonuc = new Pafta({lat:e.latlng.lat,lng:e.latlng.lng},'turkey');
         var sonuc2 = sonuc.draw(olcek,true);
-        sonuc.getRaster(olcek);
+        //sonuc.getRaster(olcek,'hybrid');
+        sonuc.scanSurfacePoints(olcek);
     });
 </script>
 <script src="src/js/mapSectionLayout.js"></script>

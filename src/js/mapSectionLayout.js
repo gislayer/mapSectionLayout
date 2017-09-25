@@ -1,13 +1,12 @@
-
-
-// lat : 38.7412 lng : 27.7266
+// edit by ali kilic www.alikilic.org
 function Pafta(latLng,country) {
     this.name='';
     this.country=country;
     this.lat = latLng.lat;
     this.lng = latLng.lng;
     this.scales=[2000000,1000000,500000,250000,100000,50000,25000,10000,5000,2000,1000,500,250,100];
-    this.images = [];
+    this.images = {};
+    this.layout={};
     this.paftalar = {
         5000000:{zoom:1,color:'',width:30,height:20,lat:5,lng:5,get:10000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},name:'',globalName:''},
         2000000:{zoom:9,color:'#ff0000',width:6,height:8,lat:2,lng:1,get:5000000,to:1000000,bbox:{leftBottom:{lat:0,lng:0},rightTop:{lat:0,lng:0}},label:2000000,name:'',globalName:''},
@@ -183,54 +182,331 @@ Pafta.prototype.getPaftaScale=function (scale) {
 Pafta.prototype.setTileSet=function () {
 
 };
-Pafta.prototype.getRaster = function (scale) {
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext("2d");
-    var LB = this.paftalar[scale].bbox.leftBottom;
-    var RT = this.paftalar[scale].bbox.rightTop;
+Pafta.prototype.getRaster = function (scale,tile) {
+    this.canvas = document.getElementById('canvas');
+    this.ctx = this.canvas.getContext("2d");
+    var LB={};
+    var RT={};
+    if(this.lat>=0 && this.lng>=0){
+        LB = this.paftalar[scale].bbox.leftBottom;
+        RT = this.paftalar[scale].bbox.rightTop;
+    }
+    if(this.lat<0 && this.lng>=0){
+        //2.bolge
+        LB.lng = this.paftalar[scale].bbox.leftBottom.lng;
+        LB.lat = this.paftalar[scale].bbox.rightTop.lat;
+        RT.lng = this.paftalar[scale].bbox.rightTop.lng;
+        RT.lat = this.paftalar[scale].bbox.leftBottom.lat;
+    }
+    if(this.lat<0 && this.lng<0){
+        //3.bolge
+        LB = this.paftalar[scale].bbox.rightTop;
+        RT = this.paftalar[scale].bbox.leftBottom;
+    }
+    if(this.lat>0 && this.lng<0){
+        //4.bolge
+        LB.lng = this.paftalar[scale].bbox.rightTop.lng;
+        LB.lat = this.paftalar[scale].bbox.leftBottom.lat;
+        RT.lng = this.paftalar[scale].bbox.leftBottom.lng;
+        RT.lat = this.paftalar[scale].bbox.rightTop.lat;
+    }
+
     LB.zoom = this.paftalar[scale].zoom;
     RT.zoom = this.paftalar[scale].zoom;
     var zoom = LB.zoom;
     var LBxy = latLong2tile(LB);
     var RTxy = latLong2tile(RT);
-    var x1=LBxy.x;
-    var y1=LBxy.y;
-    var x2=RTxy.x;
-    var y2=RTxy.y;
+    var x1=LBxy.x-1;
+    var y1=LBxy.y+1;
+    var x2=RTxy.x+1;
+    var y2=RTxy.y-1;
     var tileLB = tile2LatLong(x1,y1,zoom);
     var tileRT = tile2LatLong(x2,y2,zoom);
-    L.marker(tileLB).addTo(map);
-    L.marker(tileRT).addTo(map);
     var xfark = Math.abs(x2-x1);
     var yfark = Math.abs(y2-y1);
-    canvas.width = 256*(xfark+1);
-    canvas.height = 256*(yfark+1);
-    canvas.setAttribute("style","width:"+canvas.width+"px; height:"+canvas.height+"px;");
+    this.canvas.width = 256*(xfark+1);
+    this.canvas.height = 256*(yfark+1);
+    this.canvas.setAttribute("style","width:"+this.canvas.width+"px; height:"+this.canvas.height+"px;");
 
     var xsize=0;
     var imgs = [];
+    this.images.dizi = {xsatir:xfark,ysutun:yfark};
+    this.images.tile=tile;
+    this.images.status=false;
+    this.noload={};
+    this.images.x=[];
+    this.images.y=[];
+    this.images.res={};
+    this.layout = {scale:scale,x1:x1,y1:y1,x2:x2,y2:y2,xsize:this.canvas.width,ysize:this.canvas.height,tileLB:tileLB,tileRT:tileRT,LB:LB,RT:RT,zoom:zoom};
+
     for(var x=x1;x<=x2;x++){
+        this.images.x.push(x);
         var ysize=0;
         var xs=xsize*256;
+        this.images.res['satir'+x] = {};
         for(var y=y2;y<=y1;y++){
+            this.images.y.push(y);
+
             var ys=ysize*256;
-            var linki ='http://mt1.google.com/vt/lyrs=m&x='+x+'&y='+y+'&z='+zoom+'';
+            if(tile=="basemap"){
+                var linki ='http://mt1.google.com/vt/lyrs=m&x='+x+'&y='+y+'&z='+zoom+'';
+            }
+            if(tile=="satallite"){
+                var linki ='http://mt3.google.com/vt/lyrs=s&x='+x+'&y='+y+'&z='+zoom+'';
+            }
+            if(tile=="hybrid"){
+                var linki ='http://mt2.google.com/vt/lyrs=s,h&x='+x+'&y='+y+'&z='+zoom+'';
+            }
+            if(tile=="osm"){
+                var linki ='http://a.tile.openstreetmap.org/'+zoom+'/'+x+'/'+y+'.png';
+            }
+
+            this.images.res['satir'+x]['sutun'+y] = {satir:x,sutun:y,zoom:zoom,xs:xs,ys:ys,link:linki,durum:false};
             //var linki = 'https://a.tile.openstreetmap.org/'+zoom+'/'+x+'/'+y+'.png';
-            this.imgDownload(canvas,ctx,linki,xs,ys);
+            this.imgDownload(this.canvas,this.ctx,linki,xs,ys,x,y,zoom);
             ysize++;
         }
         xsize++;
     }
+    var ts = this;
+    var imgs = this.images;
+    this.interval = setInterval(function(){
+        var sayi = imgs.y.length;
+        var i=0;
+        for (prop in imgs.res){
+            var sutun = imgs.res[prop];
+            for(prp in sutun){
+                var durum = sutun[prp].durum;
+                if(durum==true){
+                    i++;
+                    if(i==sayi){
+                        imgs.status=true;
+                        ts.clearInterval();
+                    }
+                }else{
+                    ts.noload[prop]=sutun[prp];
+                    ts.imgDownload(this.canvas,this.ctx,sutun[prp].link,sutun[prp].xs,sutun[prp].ys,sutun[prp].satir,sutun[prp].sutun,sutun[prp].zoom);
+                }
+            }
+        }
+    }, 2000);
 
 };
+Pafta.prototype.clearInterval=function () {
+    clearInterval(this.interval);
+    this.drawLayout();
+};
+Pafta.prototype.scanSurfacePoints = function (scale) {
+    var LB={};
+    var RT={};
+    if(this.lat>=0 && this.lng>=0){
+        LB = this.paftalar[scale].bbox.leftBottom;
+        RT = this.paftalar[scale].bbox.rightTop;
+    }
+    if(this.lat<0 && this.lng>=0){
+        //2.bolge
+        LB.lng = this.paftalar[scale].bbox.leftBottom.lng;
+        LB.lat = this.paftalar[scale].bbox.rightTop.lat;
+        RT.lng = this.paftalar[scale].bbox.rightTop.lng;
+        RT.lat = this.paftalar[scale].bbox.leftBottom.lat;
+    }
+    if(this.lat<0 && this.lng<0){
+        //3.bolge
+        LB = this.paftalar[scale].bbox.rightTop;
+        RT = this.paftalar[scale].bbox.leftBottom;
+    }
+    if(this.lat>0 && this.lng<0){
+        //4.bolge
+        LB.lng = this.paftalar[scale].bbox.rightTop.lng;
+        LB.lat = this.paftalar[scale].bbox.leftBottom.lat;
+        RT.lng = this.paftalar[scale].bbox.leftBottom.lng;
+        RT.lat = this.paftalar[scale].bbox.rightTop.lat;
+    }
 
-Pafta.prototype.imgDownload=function(canvas,ctx,link,x,y){
+    LB.zoom = this.paftalar[scale].zoom;
+    RT.zoom = this.paftalar[scale].zoom;
+    var zoom = LB.zoom;
+    var LBxy = latLong2tile(LB);
+    var RTxy = latLong2tile(RT);
+    var x1=LBxy.x-1;
+    var y1=LBxy.y+2;
+    var x2=RTxy.x+1;
+    var y2=RTxy.y-1;
+    var x3=x2+1;
+    var Point1 = tile2LatLong(x1,y2,zoom);
+    var Point2 = tile2LatLong(x3,y2,zoom);
+    var Point3 = tile2LatLong(x3,y1,zoom);
+    var Point4 = tile2LatLong(x1,y1,zoom);
+    if(this.lat>=0 && this.lng>=0){
+        var yataypix = Point2.lng-Point1.lng;
+        var duseypix = Point1.lat-Point4.lat;
+    }
+    if(this.lat<0 && this.lng>=0){
+        var yataypix = Point2.lng-Point1.lng;
+        var duseypix = Point4.lat-Point1.lat;
+    }
+    if(this.lat<0 && this.lng<0){
+        var yataypix = Point1.lng-Point2.lng;
+        var duseypix = Point4.lat-Point1.lat;
+    }
+    if(this.lat>=0 && this.lng<0){
+        var yataypix = Point1.lng-Point2.lng;
+        var duseypix = Point1.lat-Point4.lat;
+    }
+
+
+    if(Math.abs(yataypix)>Math.abs(duseypix)){
+        var genpix = Math.abs(yataypix)/65;
+    }else{
+        var genpix = Math.abs(duseypix)/65;
+    }
+    var dizi= [];
+    var i=0;
+    for(var px=Point1.lat;px>=Point4.lat;px=px-genpix){
+        for(var py=Point1.lng;py<=Point2.lng;py=py+genpix){
+            if(i%450==0){
+                a=dizi.length;
+                dizi[a]=[];
+                dizi[a].push([px,py]);
+            }else{
+                dizi[a].push([px,py]);
+            }
+            i++;
+        }
+    }
+    this.surfacePoints = dizi;
+    return dizi;
+};
+Pafta.prototype.drawLayout = function () {
+    var l =  this.layout;
+    var scale = l.scale;
+    var x1=l.x1; var y1=l.y1;
+    var x2=l.x2;  var y2=l.y2;
+    var x3=x2+1;
+    var zoom=l.zoom;
+    var p4 = l.LB; var p4lng = p4.lng; var p4lat = p4.lat;
+    var p2 = l.RT; var p2lng = p2.lng; var p2lat = p2.lat;
+    var p1lng =p4lng; var p1lat=p2lat;
+    var p3lng =p2lng; var p3lat=p4lat;
+    var point1 =  L.latLng(p1lat,p1lng);
+    var point2 =  L.latLng(p2lat,p2lng);
+    var point3 =  L.latLng(p3lat,p3lng);
+    var point4 =  L.latLng(p4lat,p4lng);
+    var disp1p2 = ondalikli(point1.distanceTo(point2),3);
+    var disp2p3 = ondalikli(point2.distanceTo(point3),3);
+    var disp3p4 = ondalikli(point3.distanceTo(point4),3);
+    var disp4p1 = ondalikli(point4.distanceTo(point1),3);
+    var Point1 = tile2LatLong(x1,y2,zoom);
+    var Point2 = tile2LatLong(x3,y2,zoom);
+    var Point3 = tile2LatLong(x3,y1,zoom);
+    var Point4 = tile2LatLong(x1,y1,zoom);
+    var pixelpoint1 = map.project(point1,zoom);
+    var pixelpoint2 = map.project(point2,zoom);
+    var pixelpoint3 = map.project(point3,zoom);
+    var pixelpoint4 = map.project(point4,zoom);
+    var pixelPoint1 = map.project(Point1,zoom);
+    var pixelPoint2 = map.project(Point2,zoom);
+    var pixelPoint3 = map.project(Point3,zoom);
+    var pixelPoint4 = map.project(Point4,zoom);
+    var pixP1x = pixelpoint1.x-pixelPoint1.x;
+    var pixP1y = pixelpoint1.y-pixelPoint1.y;
+    var pixP2x = pixelpoint2.x-pixelPoint1.x;
+    var pixP2y = pixelpoint2.y-pixelPoint1.y;
+    var pixP3x = pixelpoint3.x-pixelPoint1.x;
+    var pixP3y = pixelpoint3.y-pixelPoint1.y;
+    var pixP4x = pixelpoint4.x-pixelPoint1.x;
+    var pixP4y = pixelpoint4.y-pixelPoint1.y;
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(pixP1x,pixP1y);
+    this.ctx.lineTo(pixP2x,pixP2y);
+    var ortax = (pixP2x+pixP1x)/2;
+    this.ctx.lineTo(pixP3x,pixP3y);
+    this.ctx.lineTo(pixP4x,pixP4y);
+    this.ctx.lineTo(pixP1x,pixP1y);
+    this.ctx.lineWidth = 1;
+    this.ctx.stroke();
+    this.plusDraw(pixP1x,pixP1y,"P.1");
+    this.plusDraw(pixP2x,pixP2y,"P.2");
+    this.plusDraw(pixP3x,pixP3y,"P.3");
+    this.plusDraw(pixP4x,pixP4y,"P.4");
+    this.drawinfo(this.paftalar[scale].globalName,ortax,(pixP1y+35),30);
+    this.drawinfo("P.1 = Lat : "+ondalikli(point1.lat,8)+" - Lng : "+ondalikli(point1.lng,8)+" | Dist To P.2 = "+disp1p2+" m",ortax,(pixP1y+70),20);
+    this.drawinfo("P.2 = Lat : "+ondalikli(point2.lat,8)+" - Lng : "+ondalikli(point2.lng,8)+" | Dist To P.3 = "+disp2p3+" m",ortax,(pixP1y+100),20);
+    this.drawinfo("P.3 = Lat : "+ondalikli(point3.lat,8)+" - Lng : "+ondalikli(point3.lng,8)+" | Dist To P.4 = "+disp3p4+" m",ortax,(pixP1y+130),20);
+    this.drawinfo("P.4 = Lat : "+ondalikli(point4.lat,8)+" - Lng : "+ondalikli(point4.lng,8)+" | Dist To P.1 = "+disp4p1+" m",ortax,(pixP1y+160),20);
+    this.drawinfo("Elp : WGS84 | www.alikilic.org",ortax,(pixP1y+200),20);
+    this.northArrow(pixP2x-160,pixP2y+10,scale);
+
+
+};
+Pafta.prototype.northArrow = function (x,y,scale) {
+    var tis=this;
     var imageObj = new Image();
-    imageObj.src = link;
+    imageObj.src = 'img/north.png';
     imageObj.setAttribute('crossOrigin', 'anonymous');
-    imageObj.onload = function(a) {
-        ctx.drawImage(imageObj,x,y);
+    imageObj.onload = function(e) {
+        tis.ctx.drawImage(imageObj,x,y,150,150);
+        var dataStr = tis.canvas.toDataURL("image/png");
+        download(dataStr,tis.images.tile+' - '+tis.paftalar[scale].globalName+'.png',"image/png")
     };
+
+};
+Pafta.prototype.drawinfo=function (txt,x,y,size) {
+    this.ctx.font = size+"px Arial";
+    this.ctx.shadowColor = "white";
+    this.ctx.shadowOffsetX = 2;
+    this.ctx.shadowOffsetY = 2;
+    this.ctx.shadowBlur = 2;
+    this.ctx.textAlign = "center";
+    this.ctx.fillStyle = "black";
+    this.ctx.fillText(txt,x,y);
+};
+Pafta.prototype.plusDraw=function(x,y,txt){
+    this.ctx.beginPath();
+    this.ctx.moveTo(x,y);
+    this.ctx.lineTo(x,(y-10));
+    this.ctx.lineTo(x,(y+10));
+    this.ctx.lineTo(x,y);
+    this.ctx.lineTo(x+10,y);
+    this.ctx.lineTo(x-10,y);
+    this.ctx.lineTo(x,y);
+    this.ctx.strokeStyle = 'black';
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "red";
+    this.ctx.fillText(txt,x+5,y+25);
+    this.ctx.fillStyle = "white";
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 3, 0, 2 * Math.PI, false);
+    this.ctx.fill();
+    this.ctx.fillStyle = "black";
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 1, 0, 2 * Math.PI, false);
+    this.ctx.fill();
+
+};
+Pafta.prototype.imgStatus=function (imgs) {
+    this.images=imgs;
+};
+Pafta.prototype.imgDownload=function(canvas,ctx,link,x,y,a,b,z){
+    var tis=this;
+    var imgs = this.images;
+    try {
+        var imageObj = new Image();
+        imageObj.src = link;
+        imageObj.setAttribute('crossOrigin', 'anonymous');
+        imageObj.onload = function(e) {
+            tis.ctx.drawImage(imageObj,x,y);
+            imgs.res['satir'+a]['sutun'+b].durum=true;
+            tis.imgStatus(imgs);
+        };
+    } catch(e) {
+        throw 'This is being thrown after setting img.src';
+        imgs.res['satir'+a]['sutun'+b].durum=false;
+        tis.imgStatus(imgs);
+    }
 };
 
 function latLong2tile (obj){
@@ -241,7 +517,13 @@ function latLong2tile (obj){
     var ytile = (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)));
     return {x:xtile,y:ytile,zoom:zoom};
 }
-
+function ondalikli(sayi,virgul){
+    sayi = parseFloat(sayi);
+    virgul = parseInt(virgul);
+    virgul=Math.pow(10,virgul);
+    var deger=Math.round(sayi*virgul)/virgul;
+    return deger;
+}
 function tile2LatLong (x,y,zoom){
     var n=Math.PI-2*Math.PI*y/Math.pow(2,zoom);
     var lng = (x/Math.pow(2,zoom)*360-180);
@@ -250,29 +532,29 @@ function tile2LatLong (x,y,zoom){
 }
 
 L.Layout ={
-  pafta:function (latLng,country) {
-      var pafta = new Pafta(latLng,country);
-      return pafta;
-  },
-  getScaleList:function () {
-      return this.pafta.scales;
-  },
-  getNameScale:function (scale) {
-      return this.pafta.get(scale).name;
-  },
-  getGlobalName:function (scale) {
-      return this.pafta.get(scale).globalName;
-  },
-  getScaleBbox:function (scale) {
-      return this.pafta.get(scale).bbox;
-  },
-  setColor:function (scale,color) {
-      this.pafta.paftalar[scale].color=color;
-      return this.pafta;
-  },
-  draw:function (scale) {
-      this.pafta.draw(scale);
-      return this.pafta;
-  }
+    pafta:function (latLng,country) {
+        var pafta = new Pafta(latLng,country);
+        return pafta;
+    },
+    getScaleList:function () {
+        return this.pafta.scales;
+    },
+    getNameScale:function (scale) {
+        return this.pafta.get(scale).name;
+    },
+    getGlobalName:function (scale) {
+        return this.pafta.get(scale).globalName;
+    },
+    getScaleBbox:function (scale) {
+        return this.pafta.get(scale).bbox;
+    },
+    setColor:function (scale,color) {
+        this.pafta.paftalar[scale].color=color;
+        return this.pafta;
+    },
+    draw:function (scale) {
+        this.pafta.draw(scale);
+        return this.pafta;
+    }
 };
 
