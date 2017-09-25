@@ -72,7 +72,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Authors
 
-* **Ali KILIÇ** - *Initial work* - [PurpleBooth](https://github.com/gislayer)
+* **Ali KILIÇ** - *Initial work* - [alikilic.org](https://github.com/gislayer)
 
 See also the list of [contributors](http://www.alikilic.org) who participated in this project.
 
